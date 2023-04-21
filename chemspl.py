@@ -7,9 +7,10 @@ import re
 
 splns = "urn:hl7-org:v3"
 nsmap = {"h": splns, "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
+nsmap_none = {None: splns, "xsi": "http://www.w3.org/2001/XMLSchema-instance"}
 xsiType = ET.QName("xsi", "type")
 xsiSchemaLocation = ET.QName("xsi", "schemaLocation")
-E = ElementMaker(namespace=splns, nsmap=nsmap)
+E = ElementMaker(namespace=splns, nsmap=nsmap_none)
 elementChemMap = {} # a map of Element objects to Chem objects
 
 # builds RDKit reaction and substance objects found in a reaction SPL file
