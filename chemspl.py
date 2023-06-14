@@ -19,6 +19,7 @@ elementChemMap = {} # a map of Element objects to Chem objects
 # - generate substance or reaction objects from them
 # - associate them with the document element
 def read_spl(spl_file): 
+    elementChemMap = {}
     elementTree = ET.parse(spl_file, parser=ET.XMLParser(encoding="UTF-8"))
     rootElement = elementTree.getroot()
     # go over all the reactions and interactors, but you can instead go over all substances first
@@ -58,8 +59,12 @@ def get_inchi_atom_order(mol):
 
 # returns a molecule with canonically renumbered atom numbers
 def canonicalize(template): #XXX: I am not sure what a "template" is different from the actual substance object, if it's a substance object, we should call it that
-    return Chem.RenumberAtoms(template, get_inchi_atom_order(template))
-
+    #YP reordering disconnected molecules throws an error, not sure how to deal with it, so just skip it for those cases
+    try:
+        return Chem.RenumberAtoms(template, get_inchi_atom_order(template))
+    except:
+        return template
+    
 def createSubstanceElement(substanceObject):
     substanceObject = canonicalize(substanceObject) # we just do the canonical ordering and now this is our substanceObject
     return E("identifiedSubstance", # there is going to be a lot more stuff in the future, like ids, etc.
@@ -90,14 +95,15 @@ def createSubstanceElement(substanceObject):
 
 def createReactionElement(reactionObject):                             
     reactionElement = E("processStep")
-    priorityNumber = 1
+    priorityNumber = 0
     for i in range(reactionObject.GetNumReactantTemplates()):
         substanceObject = reactionObject.GetReactantTemplate(i)
         reactionElement.append(
             E("interactor", 
                 E("priorityNumber", value=str(priorityNumber)),
                 E("functionCode",code="reactant",codeSystem="1.3.6.1.4.1.32366.1.1"),
-                createSubstanceElement(substanceObject)))
+                createSubstanceElement(substanceObject),
+              typeCode="CSM"))
         priorityNumber+=1
 
     for i in range(reactionObject.GetNumProductTemplates()):
@@ -106,7 +112,8 @@ def createReactionElement(reactionObject):
             E("interactor", 
                 E("priorityNumber", value=str(priorityNumber)),
                 E("functionCode",code="product",codeSystem="1.3.6.1.4.1.32366.1.1"),
-                createSubstanceElement(substanceObject)))
+                createSubstanceElement(substanceObject),
+              typeCode="PRD"))
         priorityNumber+=1
     return reactionElement                        
         
@@ -127,7 +134,7 @@ def createNewSPLFromSingleReaction(reactionObject):
           E("structuredBody",
             E("component",
               E("section",
-                E("id", str(uuid.uuid4())),
+                E("id", root=str(uuid.uuid4())),
                 E("code"),
                 E("title"),
                 E("text"),
@@ -136,5 +143,40 @@ def createNewSPLFromSingleReaction(reactionObject):
                     E("specification",
                       E("code", nullFlavor="NI"),
                       E("component",
-                        createReactionElement(reactionObject)))))))))
+                        E("processStep",
+                          E("component",
+                          createReactionElement(reactionObject)))))))))))
+    return root
+
+def createNewSPLFromMultipleReactions(reactionObjects):
+    # IMPORTANT: don't manually hack XML with string concatenation, because this doesn't take care of proper escaping etc.
+    root = E("document", {xsiSchemaLocation: "urn:hl7-org:v3 https://www.accessdata.fda.gov/spl/schema/spl.xsd"})
+    #root.addprevious(ET.ProcessingInstruction('xml-stylesheet href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))
+    root.addprevious(ET.ProcessingInstruction('xml-stylesheet', text='href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))    
+    documentId = uuid.uuid4() 
+    documentSetId = documentId
+    versionNumber = 1        
+    root.append(E("id", root=str(documentId)))
+    root.append(E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")))
+    root.append(E("setId", root=str(documentSetId)))
+    root.append(E("versionNumber", value=str(versionNumber)))
+    reactions_component=E("component")
+    for reactionObject in reactionObjects:
+      reactions_component.append(createReactionElement(reactionObject))
+
+    root.append(E("component",
+      E("structuredBody",
+        E("component",
+          E("section",
+            E("id", root=str(uuid.uuid4())),
+            E("code"),
+            E("title"),
+            E("text"),
+            E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")),
+              E("subject2",
+                E("specification",
+                  E("code", nullFlavor="NI"),
+                    E("component",
+                      E("processStep",
+                        reactions_component)))))))))
     return root
