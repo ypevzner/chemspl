@@ -58,13 +58,20 @@ def get_inchi_atom_order(mol):
     return tuple([make_zero_based_index(i) for i in atom_order_string.split(",")])
 
 # returns a molecule with canonically renumbered atom numbers
-def canonicalize(template): #XXX: I am not sure what a "template" is different from the actual substance object, if it's a substance object, we should call it that
-    #YP reordering disconnected molecules throws an error, not sure how to deal with it, so just skip it for those cases
-    try:
-        return Chem.RenumberAtoms(template, get_inchi_atom_order(template))
-    except:
-        return template
-    
+def canonicalize(substance):
+    frags = Chem.GetMolFrags(substance,asMols=True)
+    canonicalized_substance = Chem.Mol()
+    #in case of multi-fragment molecules, canonicalize each fragment individually then combine back into a single mol
+    for frag in frags:
+        #No need to reorder fragment atoms if fragment only consists of one atom
+        if frag.GetNumAtoms() ==1:
+            reordered_frag = frag
+        else:
+            frag_atom_order = get_inchi_atom_order(frag)
+            reordered_frag = Chem.RenumberAtoms(frag,frag_atom_order)
+        canonicalized_substance = Chem.CombineMols(canonicalized_substance,reordered_frag)  
+    return canonicalized_substance
+
 def createSubstanceElement(substanceObject):
     substanceObject = canonicalize(substanceObject) # we just do the canonical ordering and now this is our substanceObject
     return E("identifiedSubstance", # there is going to be a lot more stuff in the future, like ids, etc.
