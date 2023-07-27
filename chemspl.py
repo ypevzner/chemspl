@@ -67,8 +67,11 @@ def canonicalize(substance):
         if frag.GetNumAtoms() ==1:
             reordered_frag = frag
         else:
-            frag_atom_order = get_inchi_atom_order(frag)
-            reordered_frag = Chem.RenumberAtoms(frag,frag_atom_order)
+            if Chem.MolToSmiles(frag)!='[H]O[H]':
+                frag_atom_order = get_inchi_atom_order(frag)
+                reordered_frag = Chem.RenumberAtoms(frag,frag_atom_order)
+            else:
+                reordered_frag=frag
         canonicalized_substance = Chem.CombineMols(canonicalized_substance,reordered_frag)  
     return canonicalized_substance
 

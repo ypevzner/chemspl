@@ -1,0 +1,209 @@
+<?xml-stylesheet href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"?>
+<document xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns0="xsi" ns0:schemaLocation="urn:hl7-org:v3 https://www.accessdata.fda.gov/spl/schema/spl.xsd">
+  <id root="8a8467f5-2494-46b3-9b52-37000669e019"/>
+  <effectiveTime value="20230726221600"/>
+  <setId root="8a8467f5-2494-46b3-9b52-37000669e019"/>
+  <versionNumber value="1"/>
+  <component>
+    <structuredBody>
+      <component>
+        <section>
+          <id root="dc770227-8106-499e-b16e-fa21b4bd3e43"/>
+          <code/>
+          <title/>
+          <text/>
+          <effectiveTime value="20230726221600"/>
+          <subject2>
+            <specification>
+              <code nullFlavor="NI"/>
+              <component>
+                <processStep>
+                  <component>
+                    <processStep>
+                      <interactor typeCode="CSM">
+                        <priorityNumber value="0"/>
+                        <functionCode code="reactant" codeSystem="1.3.6.1.4.1.32366.1.1"/>
+                        <identifiedSubstance>
+                          <identifiedSubstance>
+                            <moiety>
+                              <partMoiety/>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-mdl-molfile"><![CDATA[
+     RDKit          2D
+
+  5  4  0  0  0  0  0  0  0  0999 V2000
+    1.4809   -2.2715    0.0000 C   0  0  0  0  0  0  0  0  0  1  0  0
+    2.5038   -2.8620    0.0000 C   0  0  0  0  0  0  0  0  0  2  0  0
+    0.4580   -2.8620    0.0000 N   0  0  0  0  0  0  0  0  0  3  0  0
+    3.5266   -2.2715    0.0000 O   0  0  0  0  0  0  0  0  0  4  0  0
+    2.5038   -4.0431    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+  3  1  1  0
+  1  2  1  0
+  2  4  2  0
+  2  5  1  0
+M  END
+]]></value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi">InChI=1S/C2H5NO2/c3-1-2(4)5/h1,3H2,(H,4,5)</value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi-key">DHMQDGOQFOQNFH-UHFFFAOYSA-N</value>
+                                </characteristic>
+                              </subjectOf>
+                            </moiety>
+                          </identifiedSubstance>
+                        </identifiedSubstance>
+                      </interactor>
+                      <interactor typeCode="CSM">
+                        <priorityNumber value="1"/>
+                        <functionCode code="reactant" codeSystem="1.3.6.1.4.1.32366.1.1"/>
+                        <identifiedSubstance>
+                          <identifiedSubstance>
+                            <moiety>
+                              <partMoiety/>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-mdl-molfile"><![CDATA[
+     RDKit          2D
+
+  5  4  0  0  0  0  0  0  0  0999 V2000
+    6.7903   -2.2715    0.0000 C   0  0  0  0  0  0  0  0  0  6  0  0
+    7.8132   -2.8620    0.0000 C   0  0  0  0  0  0  0  0  0  7  0  0
+    5.7674   -2.8620    0.0000 N   0  0  0  0  0  0  0  0  0  5  0  0
+    8.8360   -2.2715    0.0000 O   0  0  0  0  0  0  0  0  0  8  0  0
+    7.8132   -4.0431    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+  3  1  1  0
+  1  2  1  0
+  2  4  2  0
+  2  5  1  0
+M  END
+]]></value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi">InChI=1S/C2H5NO2/c3-1-2(4)5/h1,3H2,(H,4,5)</value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi-key">DHMQDGOQFOQNFH-UHFFFAOYSA-N</value>
+                                </characteristic>
+                              </subjectOf>
+                            </moiety>
+                          </identifiedSubstance>
+                        </identifiedSubstance>
+                      </interactor>
+                      <interactor typeCode="PRD">
+                        <priorityNumber value="2"/>
+                        <functionCode code="product" codeSystem="1.3.6.1.4.1.32366.1.1"/>
+                        <identifiedSubstance>
+                          <identifiedSubstance>
+                            <moiety>
+                              <partMoiety/>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-mdl-molfile"><![CDATA[
+     RDKit          2D
+
+  9  8  0  0  0  0  0  0  0  0999 V2000
+   14.1546   -1.8391    0.0000 C   0  0  0  0  0  0  0  0  0  1  0  0
+   17.1074   -2.8619    0.0000 C   0  0  0  0  0  0  0  0  0  6  0  0
+   15.3357   -1.8391    0.0000 C   0  0  0  0  0  0  0  0  0  2  0  0
+   17.6979   -3.8848    0.0000 C   0  0  0  0  0  0  0  0  0  7  0  0
+   13.5641   -2.8620    0.0000 N   0  0  0  0  0  0  0  0  0  3  0  0
+   15.9263   -2.8619    0.0000 N   0  0  0  0  0  0  0  0  0  5  0  0
+   15.9263   -0.8162    0.0000 O   0  0  0  0  0  0  0  0  0  4  0  0
+   18.8790   -3.8848    0.0000 O   0  0  0  0  0  0  0  0  0  8  0  0
+   17.1074   -4.9077    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+  4  8  2  0
+  4  9  1  0
+  2  4  1  0
+  2  6  1  0
+  3  6  1  0
+  3  7  2  0
+  1  3  1  0
+  1  5  1  0
+M  END
+]]></value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi">InChI=1S/C4H8N2O3/c5-1-3(7)6-2-4(8)9/h1-2,5H2,(H,6,7)(H,8,9)</value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi-key">YMAWOPBAYDPSLA-UHFFFAOYSA-N</value>
+                                </characteristic>
+                              </subjectOf>
+                            </moiety>
+                          </identifiedSubstance>
+                        </identifiedSubstance>
+                      </interactor>
+                      <interactor typeCode="PRD">
+                        <priorityNumber value="3"/>
+                        <functionCode code="product" codeSystem="1.3.6.1.4.1.32366.1.1"/>
+                        <identifiedSubstance>
+                          <identifiedSubstance>
+                            <moiety>
+                              <partMoiety/>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-mdl-molfile"><![CDATA[
+     RDKit          2D
+
+  3  2  0  0  0  0  0  0  0  0999 V2000
+   22.1334   -2.4683    0.0000 O   0  0  0  0  0  0  0  0  0  0  0  0
+   21.1105   -3.0589    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
+   23.1563   -3.0588    0.0000 H   0  0  0  0  0  0  0  0  0  0  0  0
+  1  2  1  0
+  1  3  1  0
+M  END
+]]></value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi">InChI=1S/H2O/h1H2</value>
+                                </characteristic>
+                              </subjectOf>
+                              <subjectOf>
+                                <characteristic>
+                                  <code displayName="Chemical Structure" codeSystem="2.16.840.1.113883.3.26.1.1" code="C103240"/>
+                                  <value ns0:type="ED" mediaType="application/x-inchi-key">XLYOFNOQVPJJNP-UHFFFAOYSA-N</value>
+                                </characteristic>
+                              </subjectOf>
+                            </moiety>
+                          </identifiedSubstance>
+                        </identifiedSubstance>
+                      </interactor>
+                    </processStep>
+                  </component>
+                </processStep>
+              </component>
+            </specification>
+          </subject2>
+        </section>
+      </component>
+    </structuredBody>
+  </component>
+</document>
