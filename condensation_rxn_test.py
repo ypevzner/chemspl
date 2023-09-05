@@ -3,7 +3,7 @@ from rdkit.Chem import rdChemReactions
 import chemspl
 from lxml import etree as ET
 
-#create reaction objecdt from file
+#create reaction object from file
 rxn_from_rxn = Chem.ReactionFromRxnFile("condencation_reaction.rxn")
 rxn_from_rxn.Initialize()
 

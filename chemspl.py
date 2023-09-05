@@ -27,6 +27,12 @@ def read_spl(spl_file):
     for substanceElement in rootElement.xpath(".//h:identifiedSubstance/h:identifiedSubstance",namespaces=nsmap):
         molfileText = substanceElement.xpath("./h:moiety/h:subjectOf/h:characteristic/h:value[@mediaType='application/x-mdl-molfile']", namespaces=nsmap)[0].text
         substanceObject = Chem.MolFromMolBlock(molfileText)
+        try:
+            for code in substanceElement.xpath("./h:code",namespaces=nsmap):
+                print(code)
+                substanceObject.SetProp(code.attrib["displayName"],code.attrib["code"])
+        except:
+            pass
         elementChemMap[substanceElement] = substanceObject
     # now go over all reactions and create the reaction objects.
     for reactionElement in rootElement.xpath(".//h:processStep/h:component/h:processStep", namespaces=nsmap):
@@ -75,7 +81,7 @@ def canonicalize(substance):
         canonicalized_substance = Chem.CombineMols(canonicalized_substance,reordered_frag)  
     return canonicalized_substance
 
-def createSubstanceElement(substanceObject):
+def createSubstanceElement_old(substanceObject):
     substanceObject = canonicalize(substanceObject) # we just do the canonical ordering and now this is our substanceObject
     return E("identifiedSubstance", # there is going to be a lot more stuff in the future, like ids, etc.
               E("identifiedSubstance",
@@ -103,6 +109,39 @@ def createSubstanceElement(substanceObject):
               )
             )
 
+def createSubstanceElement(substanceObject):
+    identified_substance_element = E("identifiedSubstance")
+    for prop_name in substanceObject.GetPropNames():    
+        identified_substance_element.append(E("code",displayName=prop_name, codeSystem="1.3.6.1.4.1.32366.1.1.17",code=substanceObject.GetProp(prop_name)))
+    
+    substanceObject = canonicalize(substanceObject) # we just do the canonical ordering and now this is our substanceObject
+    identified_substance_element.append(E("moiety",
+      E("partMoiety"),
+      E("subjectOf",
+        E("characteristic",
+          E("code", displayName="Chemical Structure", codeSystem="2.16.840.1.113883.3.26.1.1", code="C103240"),
+          E("value", {xsiType: "ED", "mediaType": "application/x-mdl-molfile"},
+          ET.CDATA(Chem.MolToMolBlock(substanceObject))))),
+      E("subjectOf",
+        E("characteristic",
+          E("code", displayName="Chemical Structure", codeSystem="2.16.840.1.113883.3.26.1.1", code="C103240"),
+          E("value", {xsiType: "ED", "mediaType": "application/x-inchi"},
+          Chem.MolToInchi(substanceObject)))),
+      E("subjectOf",
+        E("characteristic",
+          E("code",displayName="Chemical Structure",codeSystem="2.16.840.1.113883.3.26.1.1",code="C103240"),
+          E("value", {xsiType: "ED", "mediaType": "application/x-inchi-key"}, 
+          Chem.MolToInchiKey(substanceObject)
+            )
+          )
+        )
+      )
+    )
+
+    return E("identifiedSubstance", # there is going to be a lot more stuff in the future, like ids, etc.
+              identified_substance_element
+            )
+
 def createReactionElement(reactionObject):                             
     reactionElement = E("processStep")
     priorityNumber = 0
@@ -125,9 +164,10 @@ def createReactionElement(reactionObject):
                 createSubstanceElement(substanceObject),
               typeCode="PRD"))
         priorityNumber+=1
-    return reactionElement                        
-        
-# this creates a complete SPL with only a single reaction object, this isn't very useful but it is as far as it has been done
+    return reactionElement
+
+
+# this creates a complete SPL with only a single reaction object
 def createNewSPLFromSingleReaction(reactionObject):
     # IMPORTANT: don't manually hack XML with string concatenation, because this doesn't take care of proper escaping etc.
     root = E("document", {xsiSchemaLocation: "urn:hl7-org:v3 https://www.accessdata.fda.gov/spl/schema/spl.xsd"})
@@ -189,4 +229,30 @@ def createNewSPLFromMultipleReactions(reactionObjects):
                     E("component",
                       E("processStep",
                         reactions_component)))))))))
+    return root
+
+# this creates a complete SPL with only a single chemical substance object, this isn't very useful but it is as far as it has been done
+def createNewSPLFromSingleSubstance(molObject):
+    # IMPORTANT: don't manually hack XML with string concatenation, because this doesn't take care of proper escaping etc.
+    root = E("document", {xsiSchemaLocation: "urn:hl7-org:v3 https://www.accessdata.fda.gov/spl/schema/spl.xsd"})
+    #root.addprevious(ET.ProcessingInstruction('xml-stylesheet href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))
+    root.addprevious(ET.ProcessingInstruction('xml-stylesheet', text='href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))    
+    documentId = uuid.uuid4() 
+    documentSetId = documentId
+    versionNumber = 1        
+    root.append(E("id", root=str(documentId)))
+    root.append(E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")))
+    root.append(E("setId", root=str(documentSetId)))
+    root.append(E("versionNumber", value=str(versionNumber)))
+    root.append(E("component",
+          E("structuredBody",
+            E("component",
+              E("section",
+                E("id", root=str(uuid.uuid4())),
+                E("code"),
+                E("title"),
+                E("text"),
+                E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")),
+                  E("subject",
+                    createSubstanceElement(molObject)))))))
     return root
