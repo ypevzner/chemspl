@@ -25,15 +25,18 @@ def read_spl(spl_file):
     # go over all the reactions and interactors, but you can instead go over all substances first
     # and create the required object and associate them on the elementChem map,
     for substanceElement in rootElement.xpath(".//h:identifiedSubstance/h:identifiedSubstance",namespaces=nsmap):
-        molfileText = substanceElement.xpath("./h:moiety/h:subjectOf/h:characteristic/h:value[@mediaType='application/x-mdl-molfile']", namespaces=nsmap)[0].text
-        substanceObject = Chem.MolFromMolBlock(molfileText)
         try:
-            for code in substanceElement.xpath("./h:code",namespaces=nsmap):
-                print(code)
-                substanceObject.SetProp(code.attrib["displayName"],code.attrib["code"])
+            molfileText = substanceElement.xpath("./h:moiety/h:subjectOf/h:characteristic/h:value[@mediaType='application/x-mdl-molfile']", namespaces=nsmap)[0].text
+            substanceObject = Chem.MolFromMolBlock(molfileText)
+            try:
+                for code in substanceElement.xpath("./h:code",namespaces=nsmap):
+                    print(code)
+                    substanceObject.SetProp(code.attrib["displayName"],code.attrib["code"])
+            except:
+                pass
+            elementChemMap[substanceElement] = substanceObject #if the substance does not have a molfile section
         except:
-            pass
-        elementChemMap[substanceElement] = substanceObject
+            elementChemMap[substanceElement] = None
     # now go over all reactions and create the reaction objects.
     for reactionElement in rootElement.xpath(".//h:processStep/h:component/h:processStep", namespaces=nsmap):
         reactionObject = Chem.ChemicalReaction()
