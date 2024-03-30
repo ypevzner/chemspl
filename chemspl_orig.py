@@ -1,6 +1,4 @@
 from rdkit.Chem import AllChem as Chem
-from rdkit.Chem import rdChemReactions
-from rdkit.Chem import rdchem
 from lxml import etree as ET
 from lxml.builder import ElementMaker # not E, you need the ElementMaker where you set a namespace and nsmap!
 import uuid
@@ -32,8 +30,8 @@ def read_spl(spl_file):
             substanceObject = Chem.MolFromMolBlock(molfileText)
             try:
                 for code in substanceElement.xpath("./h:code",namespaces=nsmap):
-                    #print(code)
-                    substanceObject.SetProp('code:' + code.attrib["codeSystem"],code.attrib["code"])
+                    print(code)
+                    substanceObject.SetProp(code.attrib["displayName"],code.attrib["code"])
             except:
                 pass
             elementChemMap[substanceElement] = substanceObject #if the substance does not have a molfile section
@@ -261,98 +259,3 @@ def createNewSPLFromSingleSubstance(molObject):
                   E("subject",
                     createSubstanceElement(molObject)))))))
     return root
-
-def createNewSPLFromMultipleSubstances(molObjects):
-    # IMPORTANT: don't manually hack XML with string concatenation, because this doesn't take care of proper escaping etc.
-    root = E("document", {xsiSchemaLocation: "urn:hl7-org:v3 https://www.accessdata.fda.gov/spl/schema/spl.xsd"})
-    #root.addprevious(ET.ProcessingInstruction('xml-stylesheet href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))
-    root.addprevious(ET.ProcessingInstruction('xml-stylesheet', text='href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))    
-    documentId = uuid.uuid4() 
-    documentSetId = documentId
-    versionNumber = 1        
-    root.append(E("id", root=str(documentId)))
-    root.append(E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")))
-    root.append(E("setId", root=str(documentSetId)))
-    root.append(E("versionNumber", value=str(versionNumber)))
-    substances_component=E("component")
-    for molObject in molObjects:
-      substances_component.append(createSubstanceElement(molObject))
-
-    root.append(E("component",
-          E("structuredBody",
-            E("component",
-              E("section",
-                E("id", root=str(uuid.uuid4())),
-                E("code"),
-                E("title"),
-                E("text"),
-                E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")),
-                  E("subject",
-                    substances_component))))))
-    return root
-
-
-def createNewSPLFromMixedObjects(objects):
-    # IMPORTANT: don't manually hack XML with string concatenation, because this doesn't take care of proper escaping etc.
-    root = E("document", {xsiSchemaLocation: "urn:hl7-org:v3 https://www.accessdata.fda.gov/spl/schema/spl.xsd"})
-    #root.addprevious(ET.ProcessingInstruction('xml-stylesheet href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))
-    root.addprevious(ET.ProcessingInstruction('xml-stylesheet', text='href="https://www.accessdata.fda.gov/spl/stylesheet/spl.xsl" type="text/xsl"'))    
-    documentId = uuid.uuid4() 
-    documentSetId = documentId
-    versionNumber = 1        
-    root.append(E("id", root=str(documentId)))
-    root.append(E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")))
-    root.append(E("setId", root=str(documentSetId)))
-    root.append(E("versionNumber", value=str(versionNumber)))
-    components=E("component")
-    for obj in objects:
-      if isinstance(obj, rdChemReactions.ChemicalReaction):
-          components.append(createReactionElement(obj))
-      elif isinstance(obj, rdchem.Mol):
-          components.append(createSubstanceElement(obj))
-
-    root.append(E("component",
-          E("structuredBody",
-            E("component",
-              E("section",
-                E("id", root=str(uuid.uuid4())),
-                E("code"),
-                E("title"),
-                E("text"),
-                E("effectiveTime", value=datetime.now().strftime("%Y%m%d%H%M%S")),
-                  E("subject",
-                    components))))))
-    return root
-
-
-def createNewSPLSubjectFromSingleSubstance(molObject):
-    subject=E("subject", createSubstanceElement(molObject))
-    return subject
-
-def appendSubstanceCharacteristics(subjectOf_element, substanceObject):
-    substanceObject = canonicalize(substanceObject)
-    subjectof=E("subjectOf")
-    subjectof.append(
-        E("characteristic",
-          E("code", displayName="Chemical Structure", codeSystem="2.16.840.1.113883.3.26.1.1", code="C103240"),
-          E("value", {xsiType: "ED", "mediaType": "application/x-mdl-molfile"},
-          ET.CDATA(Chem.MolToMolBlock(substanceObject))))) 
-    subjectOf_element.append(subjectof)
-
-    subjectof=E("subjectOf")
-    subjectof.append(
-        E("characteristic",
-          E("code", displayName="Chemical Structure", codeSystem="2.16.840.1.113883.3.26.1.1", code="C103240"),
-          E("value", {xsiType: "ED", "mediaType": "application/x-inchi"},
-          Chem.MolToInchi(substanceObject))))
-    subjectOf_element.append(subjectof)
-    
-    subjectof=E("subjectOf")
-    subjectof.append(
-        E("characteristic",
-          E("code",displayName="Chemical Structure",codeSystem="2.16.840.1.113883.3.26.1.1",code="C103240"),
-          E("value", {xsiType: "ED", "mediaType": "application/x-inchi-key"}, 
-          Chem.MolToInchiKey(substanceObject))))
-    subjectOf_element.append(subjectof)
-    
-    return subjectOf_element

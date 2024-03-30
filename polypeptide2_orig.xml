@@ -27,6 +27,11 @@
               <id extension="somecode" root="2.16.840.1.113883.4.9" />
               <identifiedSubstance>
                 <code code="somecode" codeSystem="2.16.840.1.113883.4.9" />
+                <asEquivalentSubstance>
+                  <definingSubstance>
+                    <code code="a693825f-579b-9769-15c6-1d7cdd02e07d" codeSystem="2.16.840.1.113883.3.2705" />
+                  </definingSubstance>
+                </asEquivalentSubstance>
                 <moiety>
                   <code code="C118424" codeSystem="2.16.840.1.113883.3.26.1.1" displayName="PROTEIN SUBUNIT" />
                   <quantity>
