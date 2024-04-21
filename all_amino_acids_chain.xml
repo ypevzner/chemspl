@@ -39,7 +39,7 @@
                   <subjectOf>
                     <characteristic>
                       <code code="C103240" codeSystem="2.16.840.1.113883.3.26.1.1" displayName="Chemical Structure" />
-                      <value xsi:type="ED" mediaType="application/x-aa-seq">AKKA</value>
+                      <value xsi:type="ED" mediaType="application/x-aa-seq">RHKDESTNQGPCAVILMFYW</value>
                     </characteristic>
                   </subjectOf>
                 </moiety>

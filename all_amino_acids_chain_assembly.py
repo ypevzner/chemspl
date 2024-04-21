@@ -40,21 +40,22 @@ def indent(elem, level=0):
             elem.tail = i
 
 output_objects=[]
-polypeptide_et, polypeptide_element_chem_map = chemspl.read_spl("akka_only.xml")
-instructions_et, instructions_element_chem_map = chemspl.read_spl("polypeptide_instructions.xml")
+polypeptide_et, polypeptide_element_chem_map = chemspl.read_spl("all_amino_acids_chain.xml")
+amino_acids_et, amino_acids_element_chem_map = chemspl.read_spl("amino_acids.xml")
+reaction_et, reaction_element_chem_map = chemspl.read_spl("condensation_reaction.xml")
 polypeptide_sequence=get_polypeptide_sequence(polypeptide_element_chem_map)
-rxn = [val for val in instructions_element_chem_map.values() if isinstance(val, rdChemReactions.ChemicalReaction)][0]
+rxn = [val for val in reaction_element_chem_map.values() if isinstance(val, rdChemReactions.ChemicalReaction)][0]
 rxn.Initialize()
 if len(polypeptide_sequence)>1:
     for i in range(len(polypeptide_sequence)):
         if i==0:
-            products=rxn.RunReactants((get_reactant_by_code(instructions_element_chem_map,"1.3.6.1.4.1.32366.1.1.17",polypeptide_sequence[0]),get_reactant_by_code(instructions_element_chem_map,"1.3.6.1.4.1.32366.1.1.17",polypeptide_sequence[1])))
+            products=rxn.RunReactants((get_reactant_by_code(amino_acids_element_chem_map,"1.3.6.1.4.1.32366.1.1.17",polypeptide_sequence[0]),get_reactant_by_code(amino_acids_element_chem_map,"1.3.6.1.4.1.32366.1.1.17",polypeptide_sequence[1])))
         elif i>1:
-            products=rxn.RunReactants((products[0][0],get_reactant_by_code(instructions_element_chem_map,"1.3.6.1.4.1.32366.1.1.17",polypeptide_sequence[i])))
+            products=rxn.RunReactants((products[0][0],get_reactant_by_code(amino_acids_element_chem_map,"1.3.6.1.4.1.32366.1.1.17",polypeptide_sequence[i])))
 
 Chem.rdCoordGen.AddCoords(products[0][0])
 
-input_tree = ET.parse("akka_only.xml")
+input_tree = ET.parse("all_amino_acids_chain.xml")
 moiety = input_tree.xpath("//h:identifiedSubstance/h:identifiedSubstance/h:moiety", namespaces=nsmap)[0]
 moiety = chemspl.appendSubstanceCharacteristics(moiety,products[0][0])
 
@@ -63,7 +64,7 @@ output_root=ET.fromstring(ET.tostring(input_tree))
 indent(output_root)
 
 output_tree = ET.ElementTree(output_root)
-output_tree.write("akka_and_product.xml", pretty_print=True)
+output_tree.write("all_amino_acids_chain_with_molfile.xml", pretty_print=True)
 
 
 
